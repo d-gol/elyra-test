@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
   generateName: lambda-
-  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 0.5.1, pipelines.kubeflow.org/pipeline_compilation_time: '2020-07-24T10:29:00.805195',
+  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 0.5.1, pipelines.kubeflow.org/pipeline_compilation_time: '2020-07-24T10:53:32.597817',
     pipelines.kubeflow.org/pipeline_spec: '{"name": "<lambda>"}'}
   labels: {pipelines.kubeflow.org/kfp_sdk_version: 0.5.1}
 spec:
@@ -30,7 +30,7 @@ spec:
           -m pip freeze > requirements-current.txt && python bootstrapper.py --cos-endpoint
           http://minio-service.kubeflow:9000 --cos-bucket test-bucket-new --cos-directory
           "mnist-pip" --cos-dependencies-archive "mnist-download-data-3bc0c32d-dcbd-4b60-85e5-4aa31919b6e0.tar.gz"
-          --notebook "elyra-test/mnist-download-data.ipynb" ']
+          --notebook "elyra-test/mnist-download-data.ipynb" --outputs "xtrain.npy,ytrain.npy,xtest.npy,ytest.npy" ']
       command: [sh, -c]
       env:
       - {name: AWS_ACCESS_KEY_ID, value: minio}
@@ -47,7 +47,7 @@ spec:
           -m pip freeze > requirements-current.txt && python bootstrapper.py --cos-endpoint
           http://minio-service.kubeflow:9000 --cos-bucket test-bucket-new --cos-directory
           "mnist-pip" --cos-dependencies-archive "mnist-evaluate-f08fe10a-27d6-450a-a849-e7698aac4b4d.tar.gz"
-          --notebook "elyra-test/mnist-evaluate.ipynb" ']
+          --notebook "elyra-test/mnist-evaluate.ipynb" --inputs "xtrain.npy,ytrain.npy,xtest.npy,ytest.npy,xtrain_filtered.npy,ytrain_filtered.npy,xtest_filtered.npy,ytest_filtered.npy,results.txt" ']
       command: [sh, -c]
       env:
       - {name: AWS_ACCESS_KEY_ID, value: minio}
@@ -64,7 +64,8 @@ spec:
           -m pip freeze > requirements-current.txt && python bootstrapper.py --cos-endpoint
           http://minio-service.kubeflow:9000 --cos-bucket test-bucket-new --cos-directory
           "mnist-pip" --cos-dependencies-archive "mnist-filter-data-183b72cf-76c3-4789-b224-9ea8f1a8ddd0.tar.gz"
-          --notebook "elyra-test/mnist-filter-data.ipynb" ']
+          --notebook "elyra-test/mnist-filter-data.ipynb" --inputs "xtrain.npy,ytrain.npy,xtest.npy,ytest.npy"
+          --outputs "xtrain_filtered.npy,ytrain_filtered.npy,xtest_filtered.npy,ytest_filtered.npy" ']
       command: [sh, -c]
       env:
       - {name: AWS_ACCESS_KEY_ID, value: minio}
@@ -81,7 +82,8 @@ spec:
           -m pip freeze > requirements-current.txt && python bootstrapper.py --cos-endpoint
           http://minio-service.kubeflow:9000 --cos-bucket test-bucket-new --cos-directory
           "mnist-pip" --cos-dependencies-archive "mnist-model-16d2d391-e8f6-4a8c-8be9-c0cb588cb36e.tar.gz"
-          --notebook "elyra-test/mnist-model.ipynb" ']
+          --notebook "elyra-test/mnist-model.ipynb" --inputs "xtrain.npy,ytrain.npy,xtest.npy,ytest.npy,xtrain_filtered.npy,ytrain_filtered.npy,xtest_filtered.npy,ytest_filtered.npy"
+          --outputs "results.txt" ']
       command: [sh, -c]
       env:
       - {name: AWS_ACCESS_KEY_ID, value: minio}
