@@ -1,0 +1,9 @@
+elyra-metadata install runtimes --replace=true \
+--schema_name=kfp \
+--name=kfp-local \
+--display_name="Kubeflow Pipeline New" \
+--api_endpoint=CLUSTER_IP:31380 \
+--cos_endpoint=http://minio-service.kubeflow:9000 \
+--cos_username=minio \
+--cos_password=minio123 \
+--cos_bucket=test-bucket-new
